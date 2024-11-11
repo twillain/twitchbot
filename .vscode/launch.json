@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "AutomatedMessagesCommand",
+            "request": "launch",
+            "mainClass": "com.motyldrogi.bot.command.AutomatedMessagesCommand",
+            "projectName": "spring-twitch-bot"
+        },
+        {
+            "type": "java",
+            "name": "Spring Boot-ApplicationBootstrap<spring-twitch-bot>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "mainClass": "com.motyldrogi.bot.ApplicationBootstrap",
+            "projectName": "spring-twitch-bot",
+            "args": ""
+        }
+    ]
+}
