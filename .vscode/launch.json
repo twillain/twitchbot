@@ -2,6 +2,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Message",
+            "request": "launch",
+            "mainClass": "com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.Message",
+            "projectName": "spring-twitch-bot"
+        },
+        {
+            "type": "java",
+            "name": "Fragment",
+            "request": "launch",
+            "mainClass": "com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.Fragment",
+            "projectName": "spring-twitch-bot"
+        },
+        {
+            "type": "java",
+            "name": "Emote",
+            "request": "launch",
+            "mainClass": "com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.Emote",
+            "projectName": "spring-twitch-bot"
+        },
+        {
+            "type": "java",
+            "name": "MessageEvent",
+            "request": "launch",
+            "mainClass": "com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.MessageEvent",
+            "projectName": "spring-twitch-bot"
+        },
+        {
+            "type": "java",
             "name": "AutomatedMessagesCommand",
             "request": "launch",
             "mainClass": "com.motyldrogi.bot.command.AutomatedMessagesCommand",

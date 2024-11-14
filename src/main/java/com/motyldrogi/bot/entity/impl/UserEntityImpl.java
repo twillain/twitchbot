@@ -19,6 +19,9 @@ public class UserEntityImpl implements UserEntity {
     @Column(nullable = false)
     private Long identifier;
 
+    @Column
+    private String twitchId;
+
     @Column(nullable = false)
     private String name;
 
@@ -31,16 +34,29 @@ public class UserEntityImpl implements UserEntity {
     @Column(nullable = false)
     private Integer counter;
 
+    @Column
+    private String chatColor;
+
+    @Column
+    private String followedAt;
+
+    @Column
+    private String subscribedAt;
+
     private UserEntityImpl(){
 
     }
 
     private UserEntityImpl(Builder builder){
         this.identifier = builder.identifier;
+        this.twitchId = builder.twitchId;
         this.name = builder.name;
         this.role = builder.role;
         this.numberMessagesSent = builder.numberMessagesSent;
         this.counter = builder.counter;
+        this.chatColor = builder.chatColor;
+        this.followedAt = builder.followedAt;
+        this.subscribedAt = builder.subscribedAt;
     }
 
     public Long getIdentifier(){
@@ -49,6 +65,14 @@ public class UserEntityImpl implements UserEntity {
 
     public void setIdentifier(Long identifier){
         this.identifier = identifier;
+    }
+
+    public String getTwitchId() {
+        return twitchId;
+    }
+
+    public void setTwitchId(String twitchId) {
+        this.twitchId = twitchId;
     }
 
     public String getName(){
@@ -83,15 +107,42 @@ public class UserEntityImpl implements UserEntity {
         this.counter = counter;
     }
 
-    
+    public String getChatColor(){
+        return this.chatColor;
+    }
+
+    public void setChatColor(String chatColor){
+        this.chatColor = chatColor;
+    }
+
+    public String getFollowedAt(){
+        return this.followedAt;
+    }
+
+    public void setFollowedAt(String followedAt){
+        this.followedAt = followedAt;
+    }
+
+    public String getSubscribedAt(){
+        return this.subscribedAt;
+    }
+
+    public void setSubscribedAt(String subscribedAt){
+        this.subscribedAt = subscribedAt;
+    }
+
 
     public static class Builder implements Buildable<UserEntityImpl> {
 
         private Long identifier;
+        private String twitchId;
         private String name;
         private Role role;
         private Integer numberMessagesSent;
         private Integer counter;
+        private String chatColor;
+        private String followedAt;
+        private String subscribedAt;
 
         public Builder withName(String name){
             this.name = name;
@@ -100,6 +151,11 @@ public class UserEntityImpl implements UserEntity {
 
         public Builder withIdentifier(Long identifier){
             this.identifier = identifier;
+            return this;
+        }
+
+        public Builder withTwitchId(String twitchId){
+            this.twitchId = twitchId;
             return this;
         }
 
@@ -118,9 +174,32 @@ public class UserEntityImpl implements UserEntity {
             return this;
         }
 
+        public Builder withChatColor(String chatColor){
+            this.chatColor = chatColor;
+            return this;
+        }
+
+        public Builder withFollowedAt(String followedAt){
+            this.followedAt = followedAt;
+            return this;
+        }
+
+        public Builder withSubscribedAt(String subscribedAt){
+            this.subscribedAt = subscribedAt;
+            return this;
+        }
+
         @Override
         public UserEntityImpl build() {
             return new UserEntityImpl(this);
+        }
+
+        public Integer getCounter() {
+            return counter;
+        }
+    
+        public void setCounter(Integer counter) {
+            this.counter = counter;
         }
 
     }

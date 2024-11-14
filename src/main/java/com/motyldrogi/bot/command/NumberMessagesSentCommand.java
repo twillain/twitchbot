@@ -2,9 +2,8 @@ package com.motyldrogi.bot.command;
 
 import com.motyldrogi.bot.command.defaults.CommandExecutor;
 import com.motyldrogi.bot.command.defaults.CommandInfo;
-import com.motyldrogi.bot.command.defaults.CommandSender;
-import com.motyldrogi.bot.component.TwitchMessage;
 import com.motyldrogi.bot.entity.impl.UserEntityImpl;
+import com.motyldrogi.bot.service.TwitchApiService;
 
 public class NumberMessagesSentCommand implements CommandExecutor {
 
@@ -14,8 +13,8 @@ public class NumberMessagesSentCommand implements CommandExecutor {
     
     @CommandInfo(value = "messages", description = "Number of messages you sent on this channel")
     @Override
-    public void execute(TwitchMessage tMessage, CommandSender commandSender, UserEntityImpl userEntity){
-        commandSender.sendRawMessage("@" + tMessage.getSentBy() + " you have sent " + userEntity.getNumberMessagesSent() + " messages !");
+    public void execute(TwitchApiService twitchApiService, String commandString, UserEntityImpl user){
+        twitchApiService.sendMessage("@" + user.getName() + " you have sent " + user.getNumberMessagesSent() + " messages !");
     }
     
 }

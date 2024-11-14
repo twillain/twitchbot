@@ -1,3 +1,0 @@
-access : 2yh9snjua6cngyq0kl3095ng1ugzaw
-refresh : xzx1ina7diqmriz51knxtpz3lbb0cwb7lo0e9c8kn7gr7gxtbj
-client-id : gp762nuuoqcoxypju8c569th9wz7q5

@@ -4,14 +4,14 @@ import java.lang.reflect.Method;
 import com.motyldrogi.bot.command.defaults.Command;
 import com.motyldrogi.bot.command.defaults.CommandExecutor;
 import com.motyldrogi.bot.command.defaults.CommandInfo;
-import com.motyldrogi.bot.service.TwitchService;
+import com.motyldrogi.bot.service.CommandProcessorService;
 
 public class CommandRegistry {
 
-  private final TwitchService twitchService;
+  private final CommandProcessorService commandProcessorService;
 
-  public CommandRegistry(TwitchService twitchService) {
-    this.twitchService = twitchService;
+  public CommandRegistry(CommandProcessorService commandProcessorService) {
+    this.commandProcessorService = commandProcessorService;
   }
 
   public void registerByExecutors(CommandExecutor... commandExecutors) {
@@ -32,7 +32,7 @@ public class CommandRegistry {
               .withCommandExecutor(commandExecutor)
               .build();
 
-          this.twitchService.registerCommand(command.getName(), command);
+          this.commandProcessorService.registerCommand(command.getName(), command);
         }
       }
     }

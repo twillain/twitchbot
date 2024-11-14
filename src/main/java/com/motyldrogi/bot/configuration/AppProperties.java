@@ -11,22 +11,62 @@ public class AppProperties {
 
   private String prefix;
 
-  private String oauthToken;
+  private String bearerToken;
 
   private String nickname;
 
   private String channel;
 
+  private String clientId;
+
+  private String oauth;
+
+  private String userId;
+
+  private String broadcasterUserId;
+
+  public String getBroadcasterUserId() {
+    return broadcasterUserId;
+  }
+
+  public void setBroadcasterUserId(String broadcasterUserId) {
+    this.broadcasterUserId = broadcasterUserId;
+  }
+
+  public String getUserId() {
+    return userId;
+  }
+
+  public void setUserId(String userId) {
+    this.userId = userId;
+  }
+
+  public String getOauthToken() {
+    return oauth;
+  }
+
+  public void setOauthToken(String oauth) {
+    this.oauth = oauth;
+  }
+
+  public String getClientId() {
+    return clientId;
+  }
+
+  public void setClientId(String clientId) {
+    this.clientId = clientId;
+  }
+
   public String getPrefix() {
     return prefix;
   }
 
-  public String getOauthToken() {
-    return oauthToken;
+  public String getBearerToken() {
+    return bearerToken;
   }
 
-  public void setOauthToken(String oauthToken) {
-      this.oauthToken = oauthToken;
+  public void setBearerToken(String bearerToken) {
+      this.bearerToken = bearerToken;
   }
 
   public String getNickname() {

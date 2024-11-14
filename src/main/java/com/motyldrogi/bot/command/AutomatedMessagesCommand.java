@@ -2,11 +2,10 @@ package com.motyldrogi.bot.command;
 
 import com.motyldrogi.bot.command.defaults.CommandExecutor;
 import com.motyldrogi.bot.command.defaults.CommandInfo;
-import com.motyldrogi.bot.command.defaults.CommandSender;
-import com.motyldrogi.bot.component.TwitchMessage;
 import com.motyldrogi.bot.entity.impl.AutomatedMessageEntityImpl;
 import com.motyldrogi.bot.entity.impl.UserEntityImpl;
 import com.motyldrogi.bot.service.AutomatedMessageService;
+import com.motyldrogi.bot.service.TwitchApiService;
 import com.motyldrogi.bot.util.Role;
 
 public class AutomatedMessagesCommand implements CommandExecutor {
@@ -18,17 +17,17 @@ public class AutomatedMessagesCommand implements CommandExecutor {
     }
 
     @CommandInfo(value = "automatedMessage", minArguments = 1, maxArguments = 250 ,usage = "<add|remove|all> <time(min)> <message>" , role = Role.MODERATOR, description = "Set an automated message to be sent every x minutes")
-    public void execute(TwitchMessage tMessage, CommandSender commandSender, UserEntityImpl user){
+    public void execute(TwitchApiService twitchApiService, String commandString, UserEntityImpl user) {
 
 
-        String[] data = tMessage.getData().split(" ");
+        String[] data = commandString.split(" ");
 
-        if (data[0].toLowerCase().equals("add")){
+        if (data[1].toLowerCase().equals("add")){
 
             Long time = Long.valueOf("0");
 
             try {
-                time = Long.valueOf(data[1]);
+                time = Long.valueOf(data[2]);
             } catch (NumberFormatException e){
                 System.err.println(e.getMessage());
             }
@@ -36,33 +35,34 @@ public class AutomatedMessagesCommand implements CommandExecutor {
             if (time != 0){
                 AutomatedMessageEntityImpl automatedMessage = new AutomatedMessageEntityImpl.Builder()
                     .withIdentifier(null)
-                    .withMessage(tMessage.getData().substring(getIndexStartingTextAfterSpaces(tMessage.getData(), 2)))
+                    .withMessage(commandString.substring(getIndexStartingTextAfterSpaces(commandString, 3)))
+                    //TODO Check for non-negative time
                     .withTimerDelay(time)
                     .withTimerPeriod(time)
                     .build();
 
                 automatedMessageService.addAutomatedMessage(automatedMessage);
-                commandSender.sendRawMessage("@" + tMessage.getSentBy() + " Automated message added !");
+                twitchApiService.sendMessage("@" + user.getName() + " Automated message added !");
             }
 
-        } else if (data[0].toLowerCase().equals("remove")){
+        } else if (data[1].toLowerCase().equals("remove")){
 
             Long identifier = Long.valueOf("0");
-
+            //TODO Check for existing identifier
             try {
-                identifier = Long.valueOf(data[1]);
+                identifier = Long.valueOf(data[2]);
             } catch (NumberFormatException e){
                 System.err.println(e.getMessage());
             }
             automatedMessageService.removeAutomatedMessageById(identifier);
-            commandSender.sendRawMessage("@" + tMessage.getSentBy() + " Automated message removed !");
+            twitchApiService.sendMessage("@" + user.getName() + " Automated message removed !");
 
-        } else if (data[0].toLowerCase().equals("all")) {
+        } else if (data[1].toLowerCase().equals("all")) {
             automatedMessageService.getAllAutomatedMessages().forEach((message) -> {
-                commandSender.sendRawMessage("ID: " + message.getIdentifier() + " - " + message.getMessage());
+                twitchApiService.sendMessage("ID: " + message.getIdentifier() + " - " + message.getMessage());
             });
         }else {
-            commandSender.sendRawMessage("@" + tMessage.getSentBy() + " Invalid command, valid : add, remove");
+            twitchApiService.sendMessage("@" + user.getName() + " Invalid command, valid : add, remove");
         }
     }
 

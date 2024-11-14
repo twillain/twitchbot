@@ -9,4 +9,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface UserRepository extends PagingAndSortingRepository<UserEntityImpl, Long> {
 
     Optional<UserEntityImpl> findByName(String name);
+
+    Optional<UserEntityImpl> findByIdentifier(String twitchId);
+
+    Optional<UserEntityImpl> findByTwitchId(String twitchId);
 }

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 import com.motyldrogi.bot.entity.impl.AutomatedMessageEntityImpl;
 import com.motyldrogi.bot.repository.AutomatedMessageRepository;
 import com.motyldrogi.bot.service.AutomatedMessageService;
-import com.motyldrogi.bot.service.TwitchService;
+import com.motyldrogi.bot.service.TwitchApiService;
 
 public class AutomatedMessageServiceImpl implements AutomatedMessageService {
 
@@ -23,10 +23,10 @@ public class AutomatedMessageServiceImpl implements AutomatedMessageService {
 
     private ScheduledExecutorService scheduler = null;
 
-    private TwitchService twitchService;
+    private final TwitchApiService twitchApiService;
 
-    public AutomatedMessageServiceImpl(TwitchService twitchService, AutomatedMessageRepository automatedMessageRepository){
-        this.twitchService = twitchService;
+    public AutomatedMessageServiceImpl(TwitchApiService twitchApiService, AutomatedMessageRepository automatedMessageRepository){
+        this.twitchApiService = twitchApiService;
         this.automatedMessageRepository = automatedMessageRepository;
 
         scheduledTasks = new ArrayList<>();
@@ -57,7 +57,7 @@ public class AutomatedMessageServiceImpl implements AutomatedMessageService {
 
     public void addAutomatedMessage(AutomatedMessageEntityImpl message){
         automatedMessageRepository.save(message);
-        scheduledTasks.add(scheduler.scheduleWithFixedDelay(() -> twitchService.sendMessage(message.getMessage()), message.getTimerDelay(), message.getTimerPeriod(), TimeUnit.MINUTES));
+        scheduledTasks.add(scheduler.scheduleWithFixedDelay(() -> twitchApiService.sendMessage(message.getMessage()), message.getTimerDelay(), message.getTimerPeriod(), TimeUnit.MINUTES));
     }
 
 
@@ -66,7 +66,7 @@ public class AutomatedMessageServiceImpl implements AutomatedMessageService {
         messages = this.getAllAutomatedMessages();
         scheduler = Executors.newScheduledThreadPool(messages.size());
         messages.forEach(m -> {
-            scheduledTasks.add(scheduler.scheduleWithFixedDelay(() -> twitchService.sendMessage(m.getMessage()), m.getTimerDelay(), m.getTimerPeriod(), TimeUnit.MINUTES));
+            scheduledTasks.add(scheduler.scheduleWithFixedDelay(() -> twitchApiService.sendMessage(m.getMessage()), m.getTimerDelay(), m.getTimerPeriod(), TimeUnit.MINUTES));
         });
     }
 }

@@ -8,8 +8,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.motyldrogi.bot.command.defaults.Command;
-import com.motyldrogi.bot.command.defaults.CommandSender;
-import com.motyldrogi.bot.command.defaults.impl.CommandSenderImpl;
 import com.motyldrogi.bot.component.IRCConnection;
 import com.motyldrogi.bot.component.MessageComponent;
 import com.motyldrogi.bot.component.TwitchMessage;
@@ -162,7 +160,7 @@ public class TwitchServiceImpl implements TwitchService {
         }
         if (this.commandRegistry.keySet().contains(tMessage.getCommand())) {
             Command botCommand = this.commandRegistry.get(tMessage.getCommand().toLowerCase());
-            CommandSender commandSender = new CommandSenderImpl(this.connection, messageComponent);
+            //CommandSender commandSender = new CommandSenderImpl(this.connection, messageComponent);
             
             if (userEntity.getRole().getLevel() < botCommand.getRole().getLevel() && userEntity.getRole() != Role.ADMIN){
                 String invalidMessage = messageComponent.get("invalid-role");
@@ -180,7 +178,7 @@ public class TwitchServiceImpl implements TwitchService {
                 return;
             }
 
-            botCommand.getExecutor().execute(tMessage, commandSender, userEntity);
+            //botCommand.getExecutor().execute(tMessage, commandSender, userEntity);
         }
     }
 }
