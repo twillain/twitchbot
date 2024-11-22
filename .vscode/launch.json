@@ -2,6 +2,20 @@
     "configurations": [
         {
             "type": "java",
+            "name": "PollService",
+            "request": "launch",
+            "mainClass": "com.motyldrogi.bot.poll.PollService",
+            "projectName": "spring-twitch-bot"
+        },
+        {
+            "type": "java",
+            "name": "CommandParser",
+            "request": "launch",
+            "mainClass": "com.motyldrogi.bot.command.CommandParser",
+            "projectName": "spring-twitch-bot"
+        },
+        {
+            "type": "java",
             "name": "Message",
             "request": "launch",
             "mainClass": "com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.Message",

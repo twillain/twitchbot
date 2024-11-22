@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.FollowEvent;
 import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.MessageEvent;
 import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.SubscribeEvent;
+import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.SubscribeGiftEvent;
 import com.motyldrogi.bot.notification.FollowNotificationHandler;
 import com.motyldrogi.bot.notification.MessageNotificationHandler;
 import com.motyldrogi.bot.notification.SubscribeNotificationHandler;
@@ -32,17 +33,31 @@ public class SubscriptionRegistry {
             FollowEvent.class,
             "moderator:read:followers"));
         subs.add(new Subscription(
+            "channel.chat.message",
+            "1",
+            messageNotificationHandler,
+            MessageEvent.class,
+            "user:read:chat"));
+        subs.add(new Subscription(
             "channel.subscribe",
             "1",
             subscribeNotificationHandler,
             SubscribeEvent.class,
             "channel:read:subscriptions"));
         subs.add(new Subscription(
-            "channel.chat.message",
+            "channel.subscription.end",
             "1",
-            messageNotificationHandler,
-            MessageEvent.class,
-            "user:read:chat"));
+            subscribeNotificationHandler,
+            SubscribeEvent.class,
+            "channel:read:subscriptions"
+        ));
+        subs.add(new Subscription(
+            "channel.subscription.gift",
+            "1",
+            subscribeNotificationHandler,
+            SubscribeGiftEvent.class,
+            "channel:read:subscriptions"
+        ));
 
         for (Subscription subscription : subs){
             subscriptions.put(subscription.getType(), subscription);

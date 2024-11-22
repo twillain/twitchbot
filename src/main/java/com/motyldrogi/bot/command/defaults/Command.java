@@ -1,6 +1,6 @@
 package com.motyldrogi.bot.command.defaults;
 
-import com.motyldrogi.bot.util.Role;
+import com.motyldrogi.bot.role.entity.Role;
 
 public interface Command {
 

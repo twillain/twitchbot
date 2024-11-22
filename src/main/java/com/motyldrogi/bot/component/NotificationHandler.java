@@ -6,6 +6,9 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.Event;
+import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.Payload;
+import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.TwitchSession;
+import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.TwitchSubscription;
 import com.motyldrogi.bot.notification.*;
 import com.motyldrogi.bot.subscription.SubscriptionRegisterService;
 
@@ -24,15 +27,29 @@ public class NotificationHandler {
 
         public <T extends Event> void handleNotification(JsonNode rootNode){
             try{
-                
-                String eventType = rootNode.path("payload").path("subscription").path("type").asText();
+
+                JsonNode subscriptionNode = rootNode.path("payload").path("subscription");
+                TwitchSubscription subscription = objectMapper.readValue(objectMapper.writeValueAsString(subscriptionNode), TwitchSubscription.class);
+
+                String eventType = subscription.getType();
                 System.out.println("Event type : " + eventType);
+
+                JsonNode sessionNode = rootNode.path("payload").path("session");
+                TwitchSession session = null;
+                if (!sessionNode.isMissingNode()){
+                    session = objectMapper.readValue(objectMapper.writeValueAsString(sessionNode), TwitchSession.class);
+                }
 
                 @SuppressWarnings("unchecked")
                 EventNotificationHandler<T> handler = (EventNotificationHandler<T>) subscriptionRegisterService.getSubscription(eventType).getNotificationHandler();
 
+                Payload payload = new Payload();
+                payload.setSubscription(subscription);
+                payload.setSession(session);
+                
                 if (handler != null){
-                    handler.handleNotification(parseEvent(rootNode, eventType));
+                    payload.setEvent(parseEvent(rootNode, eventType));
+                    handler.handleNotification(payload);
                 } else {
                     System.err.println("No handler found for event type : " + eventType);
                 }

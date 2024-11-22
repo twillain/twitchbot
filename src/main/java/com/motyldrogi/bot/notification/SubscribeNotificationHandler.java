@@ -1,40 +1,86 @@
 package com.motyldrogi.bot.notification;
 
-import java.util.Optional;
-import java.util.concurrent.Flow.Subscriber;
-
 import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.SubscribeEvent;
-import com.motyldrogi.bot.entity.impl.UserEntityImpl;
-import com.motyldrogi.bot.repository.UserRepository;
-import com.motyldrogi.bot.util.Role;
+import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.SubscribeGiftEvent;
+import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.Payload;
+import com.motyldrogi.bot.service.TwitchApiService;
+import com.motyldrogi.bot.subs.SubService;
+import com.motyldrogi.bot.user.UserEntity;
+import com.motyldrogi.bot.user.UserService;
 
 public class SubscribeNotificationHandler implements EventNotificationHandler<SubscribeEvent> {
 
-    private final UserRepository userRepository;
+    private final TwitchApiService twitchApiService;
+    private final UserService userService;
+    private final SubService subService;
 
-    public SubscribeNotificationHandler(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public SubscribeNotificationHandler(TwitchApiService twitchApiService, UserService userService, SubService subService) {
+        this.twitchApiService = twitchApiService;
+        this.userService = userService;
+        this.subService = subService;
     }
 
-    public void handleNotification(SubscribeEvent event){
-        UserEntityImpl user = null;
-        Optional<UserEntityImpl> optionalUserEntity = userRepository.findByTwitchId(event.getUserId());
+    public void handleNotification(Payload payload){
 
-        if (!optionalUserEntity.isPresent()){
-            user = new UserEntityImpl.Builder()
-                .withIdentifier(null)
-                .withTwitchId(event.getUserId())
-                .withName(event.getUserName())
-                .withRole(Role.VIEWER)
-                .withNumberMessagesSent(0)
-                .withCounter(0)
-                .withSubscribedAt()
-                .build();
-
-                user = userRepository.save(user);
+        switch (payload.getSubscription().getType()){
+            case "channel.subscribe":
+                handleChannelSubscription(payload);
+                break;
+            case "channel.subscription.end":
+                handleChannelSubscriptionEnd(payload);
+                break;
+            case "channel.subscription.gift":
+                handleChannelSubscriptionGift(payload);
+                break;
+            default:
+                break;
         }
 
+    }
 
+    public void handleChannelSubscription(Payload payload){
+
+        SubscribeEvent event = (SubscribeEvent) payload.getEvent();
+
+        UserEntity user = userService.getUserByEventOrCreateEntity(event);
+        if (user == null) throw new IllegalArgumentException("No user found with ID : " + event.getUserId());
+
+        subService.addSub(user, payload.getSubscription().getId(), payload.getSubscription().getCreatedAt(), event.getTier(), event.isGift());
+
+        String messageToSend;
+        if (event.isGift()) {
+            messageToSend = String.format("Thank you for the subscription tier %s @%s! Don't forget to thank your subgifter", event.getTier() ,event.getUserName());
+        } else {
+            messageToSend = String.format("Thank you for the subscription tier %s @%s !", event.getTier(), event.getUserName());
+        }
+        twitchApiService.sendMessage(messageToSend);
+    }
+
+    public void handleChannelSubscriptionEnd(Payload payload){
+        SubscribeEvent event = (SubscribeEvent) payload.getEvent();
+
+        UserEntity user = userService.getUserByEventOrCreateEntity(event);
+        if (user == null) throw new IllegalArgumentException("No user found with ID : " + event.getUserId());
+
+        subService.endSub(user, payload.getSubscription().getCreatedAt());
+        
+        twitchApiService.sendMessage("Hope you'll be back soon in the sub family "+ user.getName() + "!");
+    }
+
+    public void handleChannelSubscriptionGift(Payload payload){
+        SubscribeGiftEvent event = (SubscribeGiftEvent) payload.getEvent();
+
+        UserEntity user = userService.getUserByEventOrCreateEntity(event);
+        if (user == null) throw new IllegalArgumentException("No user found with ID : " + event.getUserId());
+
+        if (event.isAnonymous()){
+            subService.addAnonymousSubGift(user, payload.getSubscription().getId(), payload.getSubscription().getCreatedAt(), event.getTotal());
+        } else {
+            subService.addNotAnonymousSubGift(user, payload.getSubscription().getId(), payload.getSubscription().getCreatedAt(), event.getTotal(), event.getTier(), event.getCumulativeTotal());
+        }
+
+        String messageToSend = String.format("Thank you @%s for the %s gifted subscriptions tier %s !", event.getUserName(), event.getTotal(), event.getTier());
+        twitchApiService.sendMessage(messageToSend);
     }
     
 }

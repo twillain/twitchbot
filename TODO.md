@@ -1,3 +1,16 @@
 # TO DO List #
-- [ ] Create services for main commands instead of implementing inside commands. (Idea : Class commands only to manage commands via Twitch Chat)
+- [x] Create services for main commands instead of implementing inside commands. (Idea : Class commands only to manage commands via Twitch Chat)
 - [x] Migrate from IRC to EventSub (https://dev.twitch.tv/docs/chat/irc-migration/)
+- [ ] Check for good practice about :
+  - [ ] Error handling
+  - [ ] Where should I catch the errors and where should I propagate them ?
+  - [ ] Add logging instead of serr
+- [ ] Add verifications on user inputs
+- [ ] Centralize error messages instead of writing them inside each classes
+  - [ ] Create a messageError.properties in each folder
+- [ ] Review commands synthax
+- [ ] Push more frenquently
+- [ ] !!! Tests !!!
+- [ ] Get number of viewers and followers
+- [ ] Front-end
+- [ ] Link to OBS Websocket

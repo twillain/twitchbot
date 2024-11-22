@@ -1,17 +1,18 @@
 package com.motyldrogi.bot.entity.TwitchWebSocketMessage.event;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 public abstract class Event {
 
-    @JsonProperty("user_id")
+    @JsonAlias({"user_id", "chatter_user_id"})
     private String userId;
 
-    @JsonProperty("user_login")
+    @JsonAlias({"user_login", "chatter_user_login"})
     private String userLogin;
 
-    @JsonProperty("user_name")
+    @JsonAlias({"user_name", "chatter_user_name"})
     private String userName;
 
     @JsonProperty("broadcaster_user_id")

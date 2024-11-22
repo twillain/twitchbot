@@ -1,50 +1,33 @@
 package com.motyldrogi.bot.notification;
 
-import java.util.Optional;
-
 import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.FollowEvent;
-import com.motyldrogi.bot.entity.impl.UserEntityImpl;
-import com.motyldrogi.bot.repository.UserRepository;
+import com.motyldrogi.bot.entity.TwitchWebSocketMessage.event.eventUtils.Payload;
 import com.motyldrogi.bot.service.TwitchApiService;
-import com.motyldrogi.bot.util.Role;
+import com.motyldrogi.bot.user.UserEntity;
+import com.motyldrogi.bot.user.UserService;
 
 public class FollowNotificationHandler implements EventNotificationHandler<FollowEvent> {
     
-    private final UserRepository userRepository;
     private final TwitchApiService twitchApiService;
+    private final UserService userService;
 
-    public FollowNotificationHandler(TwitchApiService twitchApiService, UserRepository userRepository){
+    public FollowNotificationHandler(TwitchApiService twitchApiService, UserService userService){
         this.twitchApiService = twitchApiService;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @Override
-    public void handleNotification(FollowEvent event) {
+    public void handleNotification(Payload payload) {
+
+        FollowEvent event = (FollowEvent) payload.getEvent();
         
-        UserEntityImpl user = null;
-        Optional<UserEntityImpl> optionalUserEntity = userRepository.findByTwitchId(event.getUserId());
+        UserEntity user = userService.getUserByEventOrCreateEntity(event);
+        if (user == null) throw new IllegalArgumentException("No user found with ID : " + event.getUserId());
 
-        if (!optionalUserEntity.isPresent()){
-            user = new UserEntityImpl.Builder()
-                .withIdentifier(null)
-                .withTwitchId(event.getUserId())
-                .withName(event.getUserName())
-                .withRole(Role.VIEWER)
-                .withNumberMessagesSent(1)
-                .withCounter(0)
-                .withFollowedAt(event.getFollowedAt())
-                .build();
+        user.setFollowedAt(event.getFollowedAt());
+        userService.saveUser(user);
 
-                user = userRepository.save(user);
-        }
-
-        if (user == null){
-            user = optionalUserEntity.get();
-            user.setFollowedAt(event.getFollowedAt());
-            userRepository.save(user);
-        }
-
-        twitchApiService.sendAnnoucement("Thank you for the follow @" + event.getUserName() + " !");
+        twitchApiService.sendAnnouncement("Thank you for the follow @" + event.getUserName() + " !");
         
     }
 }

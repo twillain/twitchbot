@@ -45,15 +45,6 @@ public class MessageEvent extends Event {
     @JsonProperty("source_message_id")
     private String sourceMessageId;
 
-    @JsonProperty("chatter_user_id")
-    private String chatterUserId;
-
-    @JsonProperty("chatter_user_login")
-    private String chatterUserLogin;
-
-    @JsonProperty("chatter_user_name")
-    private String chatterUserName;
-
     @JsonFormat(with = {JsonFormat.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY, JsonFormat.Feature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED})
     @JsonDeserialize(contentAs = Badge.class)
     @JsonProperty("source_badges")
@@ -67,14 +58,6 @@ public class MessageEvent extends Event {
     @JsonDeserialize(contentAs = Message.class)
     @JsonProperty("message")
     private Message message;
-
-    public String getChatterUserId() {
-        return chatterUserId;
-    }
-
-    public void setChatterUserId(String chatterUserId) {
-        this.chatterUserId = chatterUserId;
-    }
 
     public String getChannelPointsAnimationId() {
         return channelPointsAnimationId;
@@ -196,22 +179,6 @@ public class MessageEvent extends Event {
         this.badges = badges;
     }
 
-    public String getChatterUserLogin() {
-        return chatterUserLogin;
-    }
-
-    public void setChatterUserLogin(String chatterUserLogin) {
-        this.chatterUserLogin = chatterUserLogin;
-    }
-
-    public String getChatterUserName() {
-        return chatterUserName;
-    }
-
-    public void setChatterUserName(String chatterUserName) {
-        this.chatterUserName = chatterUserName;
-    }
-
     public String toString(){
         return "MessageEvent{" +
                 "messageId='" + messageId + '\'' +
@@ -225,9 +192,9 @@ public class MessageEvent extends Event {
                 ", sourceBroadcasterUserLogin='" + sourceBroadcasterUserLogin + '\'' +
                 ", sourceBroadcasterUserName='" + sourceBroadcasterUserName + '\'' +
                 ", sourceMessageId='" + sourceMessageId + '\'' +
-                ", chatterUserId='" + chatterUserId + '\'' +
-                ", chatterUserLogin='" + chatterUserLogin + '\'' +
-                ", chatterUserName='" + chatterUserName + '\'' +
+                ", chatterUserId='" + super.getUserId() + '\'' +
+                ", chatterUserLogin='" + super.getUserLogin() + '\'' +
+                ", chatterUserName='" + super.getUserName() + '\'' +
                 ", sourceBadges=" + sourceBadges +
                 ", badges=" + badges +
                 ", message=" + message +

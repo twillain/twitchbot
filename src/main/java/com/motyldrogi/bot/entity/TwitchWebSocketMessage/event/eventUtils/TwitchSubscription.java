@@ -36,6 +36,9 @@ public class TwitchSubscription {
         @JsonProperty("user_id")
         private String userId;
 
+        @JsonProperty("moderator_user_id")
+        private String moderatorUserId;
+
         public String getUserId() {
             return userId;
         }
@@ -50,6 +53,14 @@ public class TwitchSubscription {
 
         public void setBroadcasterUserId(String broadcasterUserId) {
             this.broadcasterUserId = broadcasterUserId;
+        }
+
+        public String getModeratorUserId(){
+            return this.moderatorUserId;
+        }
+
+        public void setModeratorUserId(String moderatorUserId){
+            this.moderatorUserId = moderatorUserId;
         }
     }
 

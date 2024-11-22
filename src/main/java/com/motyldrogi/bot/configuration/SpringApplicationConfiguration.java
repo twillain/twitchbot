@@ -1,33 +1,35 @@
 package com.motyldrogi.bot.configuration;
 
 
-import com.motyldrogi.bot.client.TwitchWebSocketService;
+import com.motyldrogi.bot.automatedMessages.AutomatedMessageRepository;
+import com.motyldrogi.bot.automatedMessages.AutomatedMessageService;
 import com.motyldrogi.bot.command.defaults.impl.CommandRegistry;
-import com.motyldrogi.bot.component.MessageComponent;
 import com.motyldrogi.bot.component.NotificationHandler;
 import com.motyldrogi.bot.notification.FollowNotificationHandler;
 import com.motyldrogi.bot.notification.MessageNotificationHandler;
 import com.motyldrogi.bot.notification.SubscribeNotificationHandler;
-import com.motyldrogi.bot.repository.AutomatedMessageRepository;
-import com.motyldrogi.bot.repository.UserRepository;
-import com.motyldrogi.bot.service.AutomatedMessageService;
 import com.motyldrogi.bot.service.CommandProcessorService;
-import com.motyldrogi.bot.service.SessionService;
 import com.motyldrogi.bot.service.TwitchApiService;
-import com.motyldrogi.bot.service.TwitchService;
-import com.motyldrogi.bot.service.impl.AutomatedMessageServiceImpl;
-import com.motyldrogi.bot.service.impl.TwitchServiceImpl;
+import com.motyldrogi.bot.subs.SubRepository;
+import com.motyldrogi.bot.subs.SubService;
+import com.motyldrogi.bot.subs.subGift.SubGiftRepository;
 import com.motyldrogi.bot.subscription.SubscriptionRegisterService;
+import com.motyldrogi.bot.user.UserRepository;
+import com.motyldrogi.bot.user.UserService;
+import com.motyldrogi.bot.websocket.SessionService;
+import com.motyldrogi.bot.websocket.TwitchWebSocketService;
 
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class SpringApplicationConfiguration {
 
-  private final MessageComponent messageComponent;
   private final AppProperties properties;
 
   @Autowired
@@ -36,14 +38,14 @@ public class SpringApplicationConfiguration {
   @Autowired
   public AutomatedMessageRepository automatedMessageRepository;
 
-  public SpringApplicationConfiguration(MessageComponent messageComponent, AppProperties properties) {
-    this.messageComponent = messageComponent;
-    this.properties = properties;
-  }
+  @Autowired
+  public SubRepository subRepository;
 
-  @Bean
-  public TwitchService twitchService() {
-    return new TwitchServiceImpl(this.messageComponent, this.properties, userRepository);
+  @Autowired
+  public SubGiftRepository subGiftRepository;
+
+  public SpringApplicationConfiguration(AppProperties properties) {
+    this.properties = properties;
   }
 
   @Bean
@@ -53,7 +55,7 @@ public class SpringApplicationConfiguration {
 
   @Bean
   public AutomatedMessageService automatedMessageServiceBean(TwitchApiService twitchApiService){
-    return new AutomatedMessageServiceImpl(twitchApiService, automatedMessageRepository);
+    return new AutomatedMessageService(twitchApiService, automatedMessageRepository);
   }
   
   @Bean
@@ -63,22 +65,26 @@ public class SpringApplicationConfiguration {
 
   @Bean
   public RestTemplate restTemplate() {
-    return new RestTemplate();
+    RestTemplate restTemplate = new RestTemplate();
+    CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory(httpClient);
+    restTemplate.setRequestFactory(requestFactory);
+    return restTemplate;
   }
 
   @Bean
-  public MessageNotificationHandler messageNotificationHandler(CommandProcessorService commandProcessorService) {
-    return new MessageNotificationHandler(commandProcessorService, this.properties, userRepository);
+  public MessageNotificationHandler messageNotificationHandler(CommandProcessorService commandProcessorService, UserService userService) {
+    return new MessageNotificationHandler(commandProcessorService, userService ,this.properties);
   }
 
   @Bean
-  public FollowNotificationHandler followNotificationHandler(TwitchApiService twitchApiService) {
-    return new FollowNotificationHandler(twitchApiService, userRepository);
+  public FollowNotificationHandler followNotificationHandler(TwitchApiService twitchApiService, UserService userService) {
+    return new FollowNotificationHandler(twitchApiService, userService);
   }
 
   @Bean
-  public SubscribeNotificationHandler subscribeNotificationHandler() {
-    return new SubscribeNotificationHandler();
+  public SubscribeNotificationHandler subscribeNotificationHandler(TwitchApiService twitchApiService, UserService userService, SubService subService) {
+    return new SubscribeNotificationHandler(twitchApiService, userService, subService);
   }
 
 }

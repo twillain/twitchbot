@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.motyldrogi.bot.util.Role;
+import com.motyldrogi.bot.role.entity.Role;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

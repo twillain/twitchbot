@@ -1,12 +1,17 @@
 package com.motyldrogi.bot;
 
-import com.motyldrogi.bot.client.TwitchWebSocketService;
+import com.motyldrogi.bot.automatedMessages.AutomatedMessageService;
 import com.motyldrogi.bot.command.*;
 import com.motyldrogi.bot.command.defaults.impl.CommandRegistry;
-import com.motyldrogi.bot.repository.UserRepository;
-import com.motyldrogi.bot.service.AutomatedMessageService;
-import com.motyldrogi.bot.service.TwitchService;
+import com.motyldrogi.bot.poll.PollService;
+import com.motyldrogi.bot.poll.entity.PollCommand;
+import com.motyldrogi.bot.predictions.PredictionCommand;
+import com.motyldrogi.bot.predictions.PredictionService;
+import com.motyldrogi.bot.service.TwitchApiService;
+import com.motyldrogi.bot.subs.SubService;
 import com.motyldrogi.bot.subscription.SubscriptionRegisterService;
+import com.motyldrogi.bot.user.UserService;
+import com.motyldrogi.bot.websocket.TwitchWebSocketService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -24,10 +29,10 @@ public class ApplicationBootstrap implements CommandLineRunner {
   private final SubscriptionRegisterService subscriptionRegisterService;
 
   public ApplicationBootstrap(
-    TwitchService twitchService,
     CommandRegistry commandRegistry,
     AutomatedMessageService automatedMessageService,
     TwitchWebSocketService twitchWebSocketService,
+    SubService subService,
     SubscriptionRegisterService subscriptionRegisterService) {
     this.commandRegistry = commandRegistry;
     this.automatedMessageService = automatedMessageService;
@@ -40,26 +45,39 @@ public class ApplicationBootstrap implements CommandLineRunner {
   }
 
   @Autowired
-  private UserRepository userRepository;
+  private UserService userService;
+
+  @Autowired
+  private TwitchApiService twitchApiService;
+
+  @Autowired
+  private PollService pollService;
+
+  @Autowired
+  private PredictionService predictionService;
 
   @Override
   public void run(String... args) throws Exception {
-    subscriptionRegisterService.addImplementedSubscriptions(
+    /*subscriptionRegisterService.addImplementedSubscriptions(
       "channel.follow",
       //"channel.subscribe",
       "channel.chat.message"
-    );
+    );*/
+
+    subscriptionRegisterService.addAllImplementedSubscriptions();
     twitchWebSocketService.connectWebSocket();
     automatedMessageService.initiate();
     
 		// Register commands
     this.commandRegistry.registerByExecutors(
-      new CounterCommand(userRepository),
-      new DiceCommand(),
-      new TestCommand(),
-      new SetAdminCommand(userRepository),
-      new NumberMessagesSentCommand(),
-      new AutomatedMessagesCommand(automatedMessageService)
+      new CounterCommand(twitchApiService, userService),
+      new DiceCommand(twitchApiService),
+      new TestCommand(twitchApiService, pollService),
+      new SetAdminCommand(twitchApiService, userService),
+      new NumberMessagesSentCommand(twitchApiService),
+      new AutomatedMessagesCommand(twitchApiService ,automatedMessageService),
+      new PollCommand(twitchApiService, pollService),
+      new PredictionCommand(twitchApiService, predictionService)
     );
 
   

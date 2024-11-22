@@ -1,18 +1,16 @@
 package com.motyldrogi.bot.service;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
+import com.motyldrogi.bot.command.CommandParser;
 import com.motyldrogi.bot.command.defaults.Command;
 import com.motyldrogi.bot.component.MessageComponent;
 import com.motyldrogi.bot.configuration.AppProperties;
-import com.motyldrogi.bot.entity.impl.UserEntityImpl;
-import com.motyldrogi.bot.util.Role;
+import com.motyldrogi.bot.role.entity.Role;
+import com.motyldrogi.bot.user.UserEntity;
 
 @Service
 public class CommandProcessorService { 
@@ -38,15 +36,15 @@ public class CommandProcessorService {
         this.commandRegistry.put(command.toLowerCase(), botCommand);
     }
 
-    public void processCommand(String commandString, UserEntityImpl user) {
-        if (commandString.equals("commands")){
+    public void processCommand(CommandParser command, UserEntity user) {
+        if (command.getCommand().equals("commands")){
             commandRegistry.forEach((k,v) -> twitchApiService.sendMessage("Command : !" + k + ' ' + v.getUsage() + " - " + v.getDescription()));
         }
-        String command = commandString.split(" ")[0];
-        if (this.commandRegistry.keySet().contains(command)) {
-            Command botCommand = this.commandRegistry.get(command.toLowerCase());
 
-            if (botCommand == null){
+        if (this.commandRegistry.keySet().contains(command.getCommand())) {
+            Command botCommand = this.commandRegistry.get(command.getCommand());
+
+            if (botCommand == null) {
                 twitchApiService.sendMessage("Command " + command + " not found !");
                 return;
             }
@@ -57,17 +55,16 @@ public class CommandProcessorService {
                 return;
             }
 
-            List<String> args = Arrays.stream(commandString.split(" ")).skip(1)
-                    .collect(Collectors.toList());
-                    
-            if ((args.size() < botCommand.getMinArguments()) || (args.size() > botCommand.getMaxArguments())) {
+            if ((command.getArgs().length < botCommand.getMinArguments()) || (command.getArgs().length > botCommand.getMaxArguments())) {
                 String usage = properties.getPrefix() + botCommand.getName() + " " + botCommand.getUsage();
                 String invalidMessage = messageComponent.get("invalid-pattern", usage);
                 twitchApiService.sendMessage(invalidMessage);
                 return;
             }
 
-            botCommand.getExecutor().execute(twitchApiService, commandString, user);
+            botCommand.getExecutor().execute(command, user);
         }
+
+        
     }
 }

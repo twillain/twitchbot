@@ -1,9 +1,9 @@
 package com.motyldrogi.bot.command.defaults;
 
-import com.motyldrogi.bot.entity.impl.UserEntityImpl;
-import com.motyldrogi.bot.service.TwitchApiService;
+import com.motyldrogi.bot.command.CommandParser;
+import com.motyldrogi.bot.user.UserEntity;
 
 public interface CommandExecutor {
 
-    void execute(TwitchApiService twitchApiService, String commandString, UserEntityImpl user);
+    void execute(CommandParser commandParser, UserEntity user);
 }

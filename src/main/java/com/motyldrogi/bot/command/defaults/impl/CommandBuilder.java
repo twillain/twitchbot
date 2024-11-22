@@ -2,8 +2,8 @@ package com.motyldrogi.bot.command.defaults.impl;
 
 import com.motyldrogi.bot.command.defaults.Command;
 import com.motyldrogi.bot.command.defaults.CommandExecutor;
+import com.motyldrogi.bot.role.entity.Role;
 import com.motyldrogi.bot.util.Buildable;
-import com.motyldrogi.bot.util.Role;
 
 public class CommandBuilder implements Buildable<Command> {
 

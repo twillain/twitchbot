@@ -1,41 +1,41 @@
 package com.motyldrogi.bot.command;
 
+import com.motyldrogi.bot.automatedMessages.AutomatedMessageEntity;
+import com.motyldrogi.bot.automatedMessages.AutomatedMessageService;
 import com.motyldrogi.bot.command.defaults.CommandExecutor;
 import com.motyldrogi.bot.command.defaults.CommandInfo;
-import com.motyldrogi.bot.entity.impl.AutomatedMessageEntityImpl;
-import com.motyldrogi.bot.entity.impl.UserEntityImpl;
-import com.motyldrogi.bot.service.AutomatedMessageService;
+import com.motyldrogi.bot.role.entity.Role;
 import com.motyldrogi.bot.service.TwitchApiService;
-import com.motyldrogi.bot.util.Role;
+import com.motyldrogi.bot.user.UserEntity;
 
 public class AutomatedMessagesCommand implements CommandExecutor {
 
     private AutomatedMessageService automatedMessageService;
+    private TwitchApiService twitchApiService;
 
-    public AutomatedMessagesCommand(AutomatedMessageService automatedMessageService){
+    public AutomatedMessagesCommand(TwitchApiService twitchApiService, AutomatedMessageService automatedMessageService){
+        this.twitchApiService = twitchApiService;
         this.automatedMessageService = automatedMessageService;
     }
 
-    @CommandInfo(value = "automatedMessage", minArguments = 1, maxArguments = 250 ,usage = "<add|remove|all> <time(min)> <message>" , role = Role.MODERATOR, description = "Set an automated message to be sent every x minutes")
-    public void execute(TwitchApiService twitchApiService, String commandString, UserEntityImpl user) {
+    @CommandInfo(value = "automatedMessage", minArguments = 1, maxArguments = 3 ,usage = "<add|remove|all> <time(min)> <message>" , role = Role.MODERATOR, description = "Set an automated message to be sent every x minutes")
+    public void execute(CommandParser command, UserEntity user) {
 
 
-        String[] data = commandString.split(" ");
-
-        if (data[1].toLowerCase().equals("add")){
+        if (command.getArgs()[0].toLowerCase().equals("add")){
 
             Long time = Long.valueOf("0");
 
             try {
-                time = Long.valueOf(data[2]);
+                time = Long.valueOf(command.getArgs()[1]);
             } catch (NumberFormatException e){
                 System.err.println(e.getMessage());
             }
 
             if (time != 0){
-                AutomatedMessageEntityImpl automatedMessage = new AutomatedMessageEntityImpl.Builder()
+                AutomatedMessageEntity automatedMessage = new AutomatedMessageEntity.Builder()
                     .withIdentifier(null)
-                    .withMessage(commandString.substring(getIndexStartingTextAfterSpaces(commandString, 3)))
+                    .withMessage(command.getArgs()[2])
                     //TODO Check for non-negative time
                     .withTimerDelay(time)
                     .withTimerPeriod(time)
@@ -45,34 +45,25 @@ public class AutomatedMessagesCommand implements CommandExecutor {
                 twitchApiService.sendMessage("@" + user.getName() + " Automated message added !");
             }
 
-        } else if (data[1].toLowerCase().equals("remove")){
+        } else if (command.getArgs()[0].toLowerCase().equals("remove")){
 
             Long identifier = Long.valueOf("0");
             //TODO Check for existing identifier
             try {
-                identifier = Long.valueOf(data[2]);
+                identifier = Long.valueOf(command.getArgs()[1]);
             } catch (NumberFormatException e){
                 System.err.println(e.getMessage());
             }
             automatedMessageService.removeAutomatedMessageById(identifier);
             twitchApiService.sendMessage("@" + user.getName() + " Automated message removed !");
 
-        } else if (data[1].toLowerCase().equals("all")) {
+        } else if (command.getArgs()[0].toLowerCase().equals("all")) {
             automatedMessageService.getAllAutomatedMessages().forEach((message) -> {
                 twitchApiService.sendMessage("ID: " + message.getIdentifier() + " - " + message.getMessage());
             });
         }else {
             twitchApiService.sendMessage("@" + user.getName() + " Invalid command, valid : add, remove");
         }
-    }
-
-    public static int getIndexStartingTextAfterSpaces(String s, int spaces){
-        int space = 0;
-        for (int i=0 ; i < s.length() ; i++){
-            if (space == spaces) return i;
-            if (s.charAt(i) == ' ') space++;
-        }
-        return -1;
     }
     
 }

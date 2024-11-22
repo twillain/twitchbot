@@ -5,7 +5,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
-@PropertySource("classpath:app.properties")
+@PropertySource("classpath:appbis.properties")
 @ConfigurationProperties
 public class AppProperties {
 
@@ -18,8 +18,6 @@ public class AppProperties {
   private String channel;
 
   private String clientId;
-
-  private String oauth;
 
   private String userId;
 
@@ -39,14 +37,6 @@ public class AppProperties {
 
   public void setUserId(String userId) {
     this.userId = userId;
-  }
-
-  public String getOauthToken() {
-    return oauth;
-  }
-
-  public void setOauthToken(String oauth) {
-    this.oauth = oauth;
   }
 
   public String getClientId() {

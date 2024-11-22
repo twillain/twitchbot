@@ -2,8 +2,8 @@ package com.motyldrogi.bot.controller;
 
 import java.util.List;
 
-import com.motyldrogi.bot.entity.impl.UserEntityImpl;
-import com.motyldrogi.bot.repository.UserRepository;
+import com.motyldrogi.bot.user.UserEntity;
+import com.motyldrogi.bot.user.UserRepository;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,14 +26,14 @@ public class UserController {
     }
 
     @GetMapping("/{name}")
-    public ResponseEntity<UserEntityImpl> getUserByName(@PathVariable String name) {
+    public ResponseEntity<UserEntity> getUserByName(@PathVariable String name) {
       return this.userRepository.findByName(name)
           .map(ResponseEntity::ok)
           .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("")
-    public ResponseEntity<List<UserEntityImpl>> getAllUsers(@RequestParam(required = false, defaultValue = "0") int page,
+    public ResponseEntity<List<UserEntity>> getAllUsers(@RequestParam(required = false, defaultValue = "0") int page,
         @RequestParam(required = false, defaultValue = "100") int size) {
   
       if (page < 0 || size < 1) {
@@ -41,7 +41,7 @@ public class UserController {
       }
   
       Pageable pageable = PageRequest.of(page, size);
-      Page<UserEntityImpl> entities = this.userRepository.findAll(pageable);
+      Page<UserEntity> entities = this.userRepository.findAll(pageable);
   
       if (page > (entities.getTotalPages() - 1)) {
         return ResponseEntity.notFound().build();
