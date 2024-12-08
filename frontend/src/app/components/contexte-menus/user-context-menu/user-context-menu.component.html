@@ -1,0 +1,18 @@
+<h2 mat-dialog-title>{{user?.username}} Infos</h2>
+
+<mat-dialog-content name="user-info-dialog">
+  <div class="user-info">
+    <p><strong>ID :</strong> {{ userId }}</p>
+    <p><strong>Username :</strong> {{ user?.username }}</p>
+    <p><strong>Messages sent :</strong> {{ user?.numberMessagesSent }}</p>
+    <p><strong>Followed at :</strong> {{ user?.followedAt }}</p>
+    <p><strong>Sub gifted :</strong> {{ user?.totalSubGifted }}</p>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <div class="actions">
+    <button mat-raised-button color="warn" (click)="banUser()">Ban</button>
+    <button mat-raised-button color="accent" (click)="timeoutUser()">Timeout</button>
+    <button mat-raised-button color="primary" (click)="warnUser()">Warn</button>
+  </div>
+</mat-dialog-actions>

@@ -1,0 +1,15 @@
+.chat-item {
+    flex-direction: column;
+    border-top: 1px solid #444; /* Bordure sombre */
+    padding: 4px;
+    cursor: pointer; /* Curseur pour indiquer que c'est cliquable */
+    align-items: flex-start; /* Aligner tout le contenu à gauche */
+    text-align: left;
+    
+}
+
+.chat-item:hover {
+    background-color: rgba(255, 255, 255, 0.1); /* Fond blanc avec 30% d'opacité */
+    color: black; /* Change le texte en noir pour le contraste (optionnel) */
+    border-radius: 5px; /* Ajoute des bords arrondis pour un effet plus esthétique */
+}

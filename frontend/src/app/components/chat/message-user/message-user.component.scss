@@ -1,0 +1,38 @@
+/* Première ligne : timestamp et auteur alignés */
+.message-header {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px; /* Espacement entre les éléments */
+    margin-bottom: 2px;
+}
+  
+  /* Timestamp en gris */
+.message-timestamp {
+    color: #aaa; /* Gris clair */
+    font-size: 0.9rem; /* Taille légèrement réduite */
+}
+
+/* Auteur avec sa couleur et en gras */
+.message-author {
+    font-weight: bold;
+    color: var(--author-color); /* Variable dynamique pour la couleur de l'auteur */
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.message-author:hover {
+    background-color: rgba(255, 255, 255, 0.3); /* Fond blanc avec 30% d'opacité */
+    color: black; /* Change le texte en noir pour le contraste (optionnel) */
+    border-radius: 3px; /* Ajoute des bords arrondis pour un effet plus esthétique */
+    padding: 0 2px; /* Un léger espacement entre le texte et le surlignage */
+}
+
+/* Texte normal */
+.message-text {
+    color: #fff; /* Blanc */
+    font-size: 1rem;
+    flex: 1;
+    word-break: break-word;
+    white-space: pre-wrap;
+    text-align: left;
+}

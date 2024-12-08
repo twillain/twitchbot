@@ -1,0 +1,47 @@
+  /* Style du champ de saisie et du bouton d'envoi */
+  .chat-input {
+    display: flex;
+    flex-direction: row; /* Alignement horizontal (input + bouton) */
+    justify-content: space-between; /* Espacement entre l'input et le bouton */
+    align-items: center; /* Aligne l'input et le bouton verticalement */
+    padding: 10px;
+    background-color: #2c2c2c;
+    width: 100%; /* Prend toute la largeur du chat */
+    position: sticky; /* Collé au bas du conteneur */
+    bottom: 0;
+    z-index: 10; /* S'assurer qu'il soit au-dessus du contenu du chat */
+    gap: 2px; /* Espacement entre l'input et le bouton */
+    box-sizing: border-box; /* S'assure que les padding et bordures sont inclus dans la largeur totale */
+  }
+  
+  .chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    color: white;
+    background-color: #1e1e1e;
+    margin-right: 10px;
+    outline: none;
+  }
+  
+  .chat-input input::placeholder {
+    color: #888;
+  }
+  
+  .chat-input button {
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    background-color: #00aaff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .chat-input button:hover {
+    background-color: #0088cc;
+  }

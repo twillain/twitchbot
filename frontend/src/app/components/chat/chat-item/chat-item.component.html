@@ -1,0 +1,17 @@
+<div class="chat-item">
+    <ng-container [ngSwitch]="message.type">
+      <div *ngSwitchCase="'message'" class="message-container">
+        <app-message-user [message]="message"></app-message-user>
+      </div>
+      <div *ngSwitchCase="'announcement'">
+        <em>Annonce:</em> {{ message.text }}
+      </div>
+      <div *ngSwitchCase="'sub'">
+        <strong>{{ message.username }}</strong> a souscrit !
+      </div>
+      <div *ngSwitchDefault>
+        {{ message.text }}
+      </div>
+    </ng-container>
+  </div>
+  

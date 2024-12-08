@@ -1,0 +1,32 @@
+/* Style du conteneur de chat */
+.chat-container {
+    display: flex; /* Flexbox pour aligner les éléments en colonne */
+    flex-direction: column; /* Les éléments enfants s'affichent en colonne */
+    height: 80vh; /* Hauteur fixe du chat (80% de la hauteur de l'écran) */
+    max-width: 100%; /* S'ajuste à la largeur du conteneur parent */
+    background-color: #2a2a2a; /* Couleur de fond du chat */
+    border-radius: 8px; /* Bords arrondis */
+    border: 1px solid #444; /* Bordure sombre */
+    position: fixed; /* Fixe la position pour ne pas la faire défiler */
+    right: 10px; /* Colle le chat à la droite de l'écran */
+    top: 10%; /* Légèrement décalé du haut */
+    width: 20vw; /* Largeur dynamique qui s'ajuste à 20% de la largeur de l'écran */
+    min-width: 200px; /* Largeur minimale */
+    gap: 0px; /* Pas d'espacement entre les éléments enfants */
+    overflow: hidden; /* Empêche le chat de dépasser son conteneur */
+    z-index: 5;
+}
+
+.chat-header-container {
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.chat-list-container {
+    flex: 1; /* Prend tout l'espace disponible */
+}
+
+.chat-input-container {
+    border-top: 1px solid #444;
+    padding: 5px; /* Ajoute un peu d'espace autour du champ d'entrée */
+}
+
